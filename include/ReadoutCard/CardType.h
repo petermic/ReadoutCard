@@ -19,7 +19,8 @@ struct CardType {
     Unknown, ///< Unknown card type
     Crorc,   ///< C-RORC card type
     Cru,     ///< CRU card type
-    Dummy    ///< Dummy card type
+    Dummy,   ///< Dummy card type
+    Felix    ///< FELIX card type
   };
 
   /// Converts a CardType to a string
@@ -44,6 +45,9 @@ constexpr struct CruTag_ {
 constexpr struct UnknownTag_ {
   static constexpr auto type = CardType::Unknown;
 } UnknownTag = {};
+constexpr struct FelixTag_ {
+  static constexpr auto type = CardType::Felix;
+} FelixTag = {};
 
 /// Checks if the given tag represents a valid card type.
 /// This means the type needs to be a DummyTag_ CrorcTag_ or CruTag_. NOT UnknownTag_ or anything else.
@@ -54,7 +58,8 @@ constexpr bool isValidTag()
   using tag = typename std::decay<Tag>::type;
   return std::is_same<tag, CardTypeTag::DummyTag_>::value ||
          std::is_same<tag, CardTypeTag::CrorcTag_>::value ||
-         std::is_same<tag, CardTypeTag::CruTag_>::value;
+         std::is_same<tag, CardTypeTag::CruTag_>::value ||
+         std::is_same<tag, CardTypeTag::FelixTag_>::value;
 }
 
 /// Checks if the given tag represents a valid card type
@@ -72,7 +77,8 @@ constexpr bool isNonDummyTag()
   // To make the comparison simpler, we strip Tag of cv-qualifiers and references
   using tag = typename std::decay<Tag>::type;
   return std::is_same<tag, CardTypeTag::CrorcTag_>::value ||
-         std::is_same<tag, CardTypeTag::CruTag_>::value;
+         std::is_same<tag, CardTypeTag::CruTag_>::value ||
+         std::is_same<tag, CardTypeTag::FelixTag_>::value;
 }
 
 /// Checks if the given tag represents a dummy card type
@@ -88,6 +94,7 @@ static_assert(isValidTag<DummyTag_>() && isValidTag(DummyTag), "");
 static_assert(isValidTag<CrorcTag_>() && isValidTag(CrorcTag), "");
 static_assert(isValidTag<CruTag_>() && isValidTag(CruTag), "");
 static_assert(!isValidTag<UnknownTag_>() && !isValidTag(UnknownTag), "");
+static_assert(isValidTag<FelixTag_>() && isValidTag(FelixTag), "");
 static_assert(!isValidTag<int>(), "");
 
 } // namespace CardTypeTag
